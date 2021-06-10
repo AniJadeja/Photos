@@ -9,29 +9,25 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
+
         android:layout_width="match_parent"
         android:layout_height="@dimen/noActivityHeight"
-        android:fitsSystemWindows="true"
         android:theme="@style/MyStyle">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/colap_toolbar"
             style="@style/MyStyle"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
             app:expandedTitleGravity="center"
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
             app:title="Photos">
 
             <com.google.android.material.appbar.MaterialToolbar
-                app:layout_constraintHorizontal_bias="0.25"
-                android:paddingStart="25dp"
                 android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:fitsSystemWindows="true" >
-
+                android:layout_height="80dp">
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -44,8 +40,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="90dp"
-            android:fillViewport="true"
             android:background="@color/black"
+            android:layout_margin="0dp"
+            android:padding="0dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             >
 
@@ -55,7 +52,7 @@
                 app:layout_constraintStart_toStartOf="@id/per6"
                 app:layout_constraintEnd_toEndOf="@id/per94"
                 android:layout_width="0dp"
-                android:layout_height="28dp"
+                android:layout_height="32dp"
                 android:background="@drawable/search"
                 android:hint="Search Your Photos ..."
                 android:textSize="12sp"
@@ -67,24 +64,27 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                app:layout_constraintTop_toBottomOf="@id/search" />
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="30dp"
+                app:layout_constraintEnd_toEndOf="@id/per94"
+                app:layout_constraintStart_toStartOf="@id/per6"
+                app:layout_constraintTop_toBottomOf="@id/search"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/per6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.06" />
+                app:layout_constraintGuide_percent="0.04" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/per94"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.94" />
+                app:layout_constraintGuide_percent="0.96" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
