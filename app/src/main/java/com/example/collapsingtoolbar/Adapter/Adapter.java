@@ -1,5 +1,9 @@
 package com.example.collapsingtoolbar.Adapter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,47 +13,54 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.collapsingtoolbar.Model.ImageModel;
 import com.example.collapsingtoolbar.R;
+
+import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
 
-    int []arr;
+    Context context;
+    ArrayList<ImageModel> arrayList;
+    Activity activity;
 
-    public Adapter(int[] arr) {
-        this.arr = arr;
+    public Adapter(Context context, ArrayList<ImageModel> arrayList, Activity activity) {
+        this.context = context;
+        this.arrayList = arrayList;
+        this.activity = activity;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_view,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_view, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.img.setImageResource(arr[position]);
-        holder.txt.append(" "+position);
+        Glide.with(context)
+                .load("file://" + arrayList.get(position)
+                        .getThumbnail())
+                .into(holder.img);
     }
 
     @Override
     public int getItemCount() {
-        return arr.length;
+        return arrayList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView img;
         TextView txt;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            img=itemView.findViewById(R.id.img);
-            txt = itemView.findViewById(R.id.txt);
-
-
+            img = itemView.findViewById(R.id.img);
         }
     }
 }

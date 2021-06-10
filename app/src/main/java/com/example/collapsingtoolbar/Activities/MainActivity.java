@@ -35,16 +35,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        constraint.setOnClickListener(v -> {
+        new Thread(()->constraint.setOnClickListener(v -> {
             search.clearFocus();
             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        });
-
-
-
-
-
-
+        }));
 
     }
 
