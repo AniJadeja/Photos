@@ -1,4 +1,4 @@
-package com.example.collapsingtoolbar;
+package com.example.collapsingtoolbar.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.collapsingtoolbar.R;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
