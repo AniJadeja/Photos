@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.example.collapsingtoolbar.Adapter.Adapter;
 import com.example.collapsingtoolbar.Model.ImageModel;
 import com.example.collapsingtoolbar.R;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     ConstraintLayout constraint;
     EditText search;
     InputMethodManager imm;
-
+    AppBarLayout appBarLayout;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<ImageModel> arrayList;
@@ -48,16 +50,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         new Thread(this::init).start();
+
     }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        search = findViewById(R.id.search);
+        appBarLayout = findViewById(R.id.appbar);
+        search.setHint(String.valueOf(appBarLayout.getLayoutParams().height));
 
     }
 
     void init() {
-        search = findViewById(R.id.search);
+
+
         recyclerView = findViewById(R.id.recyclerview);
         layoutManager = new GridLayoutManager(MainActivity.this,4);
         recyclerView.setLayoutManager(layoutManager);
@@ -80,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 101);
             }
             else {
-                new Thread(() -> runOnUiThread(this::fetchImages)).start();
+
+              new Thread(() -> runOnUiThread(this::fetchImages)).start();
 
             }
         })).start();
