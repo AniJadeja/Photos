@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item name="noActivityHeight" type="dimen">250dp</item>
-    <item name="cardview_layout_width" type="dimen">48dp</item>
-</resources>

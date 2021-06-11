@@ -15,8 +15,8 @@
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/colap_toolbar"
-            style="@style/MyStyle"
 
+            style="@style/MyStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:expandedTitleGravity="center"
@@ -53,9 +53,9 @@
                 android:layout_width="0dp"
                 android:layout_height="32dp"
                 android:background="@drawable/search"
-                android:hint="Search Your Photos ..."
+               android:hint="Saerch Photos ..."
                 android:textSize="12sp"
-                android:textColorHint="@color/grey"
+                android:textColorHint="@color/hint"
                 android:paddingStart="15dp"
                 android:textColor="@color/white"
                 />

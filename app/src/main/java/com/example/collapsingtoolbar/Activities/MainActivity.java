@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -20,6 +22,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 import com.example.collapsingtoolbar.Adapter.Adapter;
 import com.example.collapsingtoolbar.Model.ImageModel;
 import com.example.collapsingtoolbar.R;
+import com.example.collapsingtoolbar.utils.Dialog;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -39,81 +43,79 @@ public class MainActivity extends AppCompatActivity {
     ConstraintLayout constraint;
     EditText search;
     InputMethodManager imm;
-    AppBarLayout appBarLayout;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<ImageModel> arrayList;
+
+    Thread Task;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new Thread(this::init).start();
+
+        Task = new Thread(this::init);
+        Task.start();
+        try {
+            Task.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        search = findViewById(R.id.search);
-        appBarLayout = findViewById(R.id.appbar);
-        search.setHint(String.valueOf(appBarLayout.getLayoutParams().height));
+    protected void onStart() {
+        super.onStart();
+        Task = new Thread(this::startExe);
+        Task.start();
+        try {
+            Task.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Thread(() -> runOnUiThread(()->
+        {
+            try {
+                fetchImages();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        })).start();
     }
 
     void init() {
-
-
+        search = findViewById(R.id.search);
         recyclerView = findViewById(R.id.recyclerview);
-        layoutManager = new GridLayoutManager(MainActivity.this,4);
+        layoutManager = new GridLayoutManager(MainActivity.this, 4);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        final Typeface tf = ResourcesCompat.getFont(MainActivity.this, R.font.odin);
         collapsingToolbar = findViewById(R.id.colap_toolbar);
         constraint = findViewById(R.id.constraint);
+    }
+
+    void startExe() {
+        imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        final Typeface tf = ResourcesCompat.getFont(MainActivity.this, R.font.odin);
         collapsingToolbar.setCollapsedTitleTypeface(tf);
         collapsingToolbar.setExpandedTitleTypeface(tf);
         arrayList = new ArrayList<>();
         search.clearFocus();
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        getPermission();
-    }
-
-    private void getPermission() {
-        new Thread(()-> runOnUiThread(() ->{
-            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 101);
-            }
-            else {
-
-              new Thread(() -> runOnUiThread(this::fetchImages)).start();
-
-            }
-        })).start();
 
     }
 
 
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 101) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                new Handler(Looper.myLooper()).post(this::fetchImages);
-            }
-            else {
-                Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void fetchImages(){
+    private void fetchImages() throws InterruptedException {
         Uri uri;
         Cursor cursor;
-        int column_index_data,thumb;
+        int column_index_data, thumb;
 
         uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -125,22 +127,29 @@ public class MainActivity extends AppCompatActivity {
 
         String orderBy = MediaStore.Images.Media.CD_TRACK_NUMBER;
 
-        cursor = getApplicationContext().getContentResolver().query(uri,projection,null,null,orderBy+" DESC");
+        cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
         thumb = cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA);
 
-        while (cursor.moveToNext())
-        {
-            String absoluteImagePath = cursor.getString(column_index_data);
-            ImageModel ImageModel = new ImageModel();
-            ImageModel.setPath(absoluteImagePath);
-            ImageModel.setThumbnail(cursor.getString(thumb));
-            arrayList.add(ImageModel);
-        }
+        Task = new Thread(
+                () -> {
+                    while (cursor.moveToNext()) {
+                        String absoluteImagePath = cursor.getString(column_index_data);
+                        ImageModel ImageModel = new ImageModel();
+                        ImageModel.setPath(absoluteImagePath);
+                        ImageModel.setThumbnail(cursor.getString(thumb));
+                        arrayList.add(ImageModel);
+                    }
+                }
+        );
+        Task.start();
+        Task.join();
 
-        Adapter Adapter = new Adapter(getApplicationContext(),arrayList,MainActivity.this);
+
+        Adapter Adapter = new Adapter(getApplicationContext(), arrayList, MainActivity.this);
         recyclerView.setAdapter(Adapter);
         cursor.close();
     }
+
 }

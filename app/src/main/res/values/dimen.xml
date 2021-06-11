@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="noActivityHeight" type="dimen">350dp</dimen>
+    <dimen name="cardview_layout_width" type="dimen">48dp</dimen>
+    <item name="ImageSpanCount" type="dimen">4</item>
+</resources>
