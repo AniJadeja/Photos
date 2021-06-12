@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CollapsingToolbar</string>
+    <string name="search_your_photos">Search Your Photos …</string>
+    <string name="recyclerview_images">RecyclerView Images</string>
 </resources>

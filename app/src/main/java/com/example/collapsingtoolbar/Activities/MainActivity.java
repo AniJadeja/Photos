@@ -6,10 +6,12 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ScrollView;
 
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
@@ -62,11 +64,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void clearSearch()
+    {
+        if (search.hasFocus()){
+        search.clearFocus();
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);}
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        fetchImages();
 
+        Task = new Thread(this::fetchImages);
+        Task.start();
+        try {
+            Task.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -86,10 +101,8 @@ public class MainActivity extends AppCompatActivity {
         collapsingToolbar.setCollapsedTitleTypeface(tf);
         collapsingToolbar.setExpandedTitleTypeface(tf);
         arrayList = new ArrayList<>();
-        search.clearFocus();
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         scrollView = findViewById(R.id.scrollView);
-
+        recyclerView.setOnClickListener(v -> clearSearch());
     }
 
 
@@ -113,17 +126,24 @@ public class MainActivity extends AppCompatActivity {
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
-        while (cursor.moveToNext()) {
-            String absoluteImagePath = cursor.getString(column_index_data);
-            ImageModel ImageModel = new ImageModel();
-            ImageModel.setPath(absoluteImagePath);
-            arrayList.add(ImageModel);
+        new Thread(() -> {
+            cursor.moveToFirst();
+            while (cursor.moveToNext()) {
+                String absoluteImagePath = cursor.getString(column_index_data);
+                ImageModel ImageModel = new ImageModel();
+                ImageModel.setPath(absoluteImagePath);
+                arrayList.add(ImageModel);
+            }
+
+            runOnUiThread(() -> {
+                Adapter Adapter = new Adapter(getApplicationContext(), arrayList, MainActivity.this);
+                recyclerView.setAdapter(Adapter);
+                cursor.close();
+            });
         }
-
-
-        Adapter Adapter = new Adapter(getApplicationContext(), arrayList, MainActivity.this);
-        recyclerView.setAdapter(Adapter);
-        cursor.close();
+        ).start();
     }
+
+
 
 }

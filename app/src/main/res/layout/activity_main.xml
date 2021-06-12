@@ -52,8 +52,10 @@
                 app:layout_constraintEnd_toStartOf="@id/options"
                 android:layout_width="0dp"
                 android:layout_height="32dp"
+                android:inputType="text"
+                android:autofillHints="@string/app_name"
                 android:background="@drawable/search"
-                android:hint="Search Your Photos ..."
+                android:hint="@string/search_your_photos"
                 android:textSize="12sp"
                 android:textColorHint="@color/hint"
                 android:drawableEnd="@drawable/ic_search"
@@ -64,6 +66,7 @@
 
             <ImageView
                 android:id="@+id/options"
+                android:contentDescription="@string/recyclerview_images"
                 app:layout_constraintTop_toTopOf="@id/search"
                 app:layout_constraintBottom_toBottomOf="@id/search"
                 app:layout_constraintStart_toEndOf="@id/search"
@@ -79,6 +82,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="20dp"
+
                 app:layout_constraintEnd_toEndOf="@id/per94"
                 app:layout_constraintStart_toStartOf="@id/per6"
                 app:layout_constraintTop_toBottomOf="@id/search"
