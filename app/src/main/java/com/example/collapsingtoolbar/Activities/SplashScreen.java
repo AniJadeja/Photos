@@ -51,6 +51,7 @@ public class SplashScreen extends AppCompatActivity implements Dialog.DialogCall
                 //permissions granted
                 new Handler(Looper.getMainLooper()).postDelayed(()->{
                         startActivity(new Intent(this,MainActivity.class));
+                        overridePendingTransition(R.anim.slide_from_right,R.anim.slide_to_left);
                         finishAffinity();
                 },200);
 

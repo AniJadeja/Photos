@@ -1,39 +1,24 @@
 package com.example.collapsingtoolbar.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ScrollView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.collapsingtoolbar.Adapter.Adapter;
 import com.example.collapsingtoolbar.Model.ImageModel;
 import com.example.collapsingtoolbar.R;
-import com.example.collapsingtoolbar.utils.Dialog;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.ArrayList;
@@ -46,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<ImageModel> arrayList;
-
+    ScrollView scrollView;
     Thread Task;
 
 
@@ -80,14 +65,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new Thread(() -> runOnUiThread(()->
-        {
-            try {
-                fetchImages();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        })).start();
+        fetchImages();
+
+
     }
 
     void init() {
@@ -108,43 +88,37 @@ public class MainActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
         search.clearFocus();
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        scrollView = findViewById(R.id.scrollView);
 
     }
 
 
-    private void fetchImages() throws InterruptedException {
+    private void fetchImages() {
         Uri uri;
         Cursor cursor;
-        int column_index_data, thumb;
+        int column_index_data;
+
+
+
 
         uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
         String[] projection = {
                 MediaStore.MediaColumns.DATA,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Thumbnails.DATA};
+                MediaStore.Images.Media._ID
+        };
 
-        String orderBy = MediaStore.Images.Media.CD_TRACK_NUMBER;
+        String orderBy = MediaStore.Images.Media.DEFAULT_SORT_ORDER;
 
         cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        thumb = cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA);
 
-        Task = new Thread(
-                () -> {
-                    while (cursor.moveToNext()) {
-                        String absoluteImagePath = cursor.getString(column_index_data);
-                        ImageModel ImageModel = new ImageModel();
-                        ImageModel.setPath(absoluteImagePath);
-                        ImageModel.setThumbnail(cursor.getString(thumb));
-                        arrayList.add(ImageModel);
-                    }
-                }
-        );
-        Task.start();
-        Task.join();
+        while (cursor.moveToNext()) {
+            String absoluteImagePath = cursor.getString(column_index_data);
+            ImageModel ImageModel = new ImageModel();
+            ImageModel.setPath(absoluteImagePath);
+            arrayList.add(ImageModel);
+        }
 
 
         Adapter Adapter = new Adapter(getApplicationContext(), arrayList, MainActivity.this);

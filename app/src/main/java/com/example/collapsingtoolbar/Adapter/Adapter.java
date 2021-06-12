@@ -45,7 +45,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Glide.with(context)
-                .load("file://" + arrayList.get(position).getThumbnail())
+                .load("file://" + arrayList.get(position).getPath())
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(holder.img);
 
