@@ -8,3 +8,4 @@ It will also support the one handed gestures and taps.
 
 1. All images are loading full resolution instead of thumbnails.
 2. Again loading when swiped down and up.
+3. Default sorting.
