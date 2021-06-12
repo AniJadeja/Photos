@@ -2,22 +2,19 @@ package com.example.collapsingtoolbar.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
-import com.example.collapsingtoolbar.Model.ImageModel;
+import com.example.collapsingtoolbar.Model.MediaModel;
 import com.example.collapsingtoolbar.R;
+import com.example.collapsingtoolbar.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -25,10 +22,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
 
     Context context;
-    ArrayList<ImageModel> arrayList;
+    ArrayList<MediaModel> arrayList;
     Activity activity;
 
-    public Adapter(Context context, ArrayList<ImageModel> arrayList, Activity activity) {
+    public Adapter(Context context, ArrayList<MediaModel> arrayList, Activity activity) {
         this.context = context;
         this.arrayList = arrayList;
         this.activity = activity;
@@ -44,11 +41,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Glide.with(context)
-                .load("file://" + arrayList.get(position).getPath())
+        GlideApp.with(context)
+                //.load("file://" + arrayList.get(position).getUri())
+                .load(arrayList.get(position).getUri())
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(holder.img);
-
+        Log.d("FetchImages(): "," Glide Called");
     }
 
     @Override

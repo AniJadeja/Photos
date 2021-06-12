@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">CollapsingToolbar</string>
+    <string name="app_name">Photos</string>
     <string name="search_your_photos">Search Your Photos …</string>
     <string name="recyclerview_images">RecyclerView Images</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
